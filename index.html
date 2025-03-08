@@ -3,27 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#FFFFFF"> <!-- Для Telegram -->
     <title>Тестовый сайт</title>
     <style>
         html, body {
-            background-color: #FFFFFF; /* Белый фон для всей страницы */
+            background-color: #FFFFFF;
             font-family: Arial, sans-serif;
             text-align: center;
-            margin: 0; /* Убираем стандартные отступы */
+            margin: 0;
             padding: 0;
-            height: 100%; /* Устанавливаем высоту для корректного отображения */
+            height: 100%;
         }
         .container {
             max-width: 600px;
-            margin: 50px auto 0 auto; /* Отступ сверху 50px */
-            background-color: #FFFFFF; /* Белый фон для контейнера */
+            margin: 50px auto 0 auto;
+            background-color: #FFFFFF;
             padding: 20px;
         }
         .options {
             text-align: left;
             display: inline-block;
             margin: 20px 0;
-            background-color: #FFFFFF; /* Белый фон для вариантов ответа */
+            background-color: #FFFFFF;
         }
         button {
             padding: 10px 20px;
@@ -47,15 +48,15 @@
         #result {
             margin-top: 20px;
             font-weight: bold;
-            background-color: #FFFFFF; /* Белый фон для результата */
+            background-color: #FFFFFF;
         }
         #groupSelection {
             margin: 20px 0;
-            background-color: #FFFFFF; /* Белый фон для выбора группы */
+            background-color: #FFFFFF;
         }
         #testArea {
             display: none;
-            background-color: #FFFFFF; /* Белый фон для области тестов */
+            background-color: #FFFFFF;
         }
         input[type="text"] {
             padding: 5px;
@@ -75,7 +76,7 @@
             background-color: rgba(0, 0, 0, 0.5);
         }
         .modal-content {
-            background-color: #FFFFFF; /* Белый фон для модального окна */
+            background-color: #FFFFFF;
             margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
@@ -146,7 +147,11 @@
 
         const testGroups = {
             math: [
-                { question: "2x + 3 = 11. Чему равно x?", options: ["4", "5", "6"], correctAnswer: "4" },
+                { 
+                    question: "Прослушайте объявление и определите, где можно его услышать. Выберите правильный ответ.", 
+                    options: ["в ресторане", "в магазине", "в библиотеке"], 
+                    correctAnswer: "в магазине" // Предположим, это правильный ответ
+                },
                 { question: "12 ÷ 3 + 5 = ?", options: ["7", "9", "4"], correctAnswer: "9" },
                 { question: "3 × 4 - 2 = ?", options: ["10", "12", "14"], correctAnswer: "10" },
                 { question: "15 - 2 × 3 = ?", options: ["9", "12", "6"], correctAnswer: "9" },
