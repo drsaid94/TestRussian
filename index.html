@@ -5,20 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тестовый сайт</title>
     <style>
-        body {
+        html, body {
+            background-color: #FFFFFF; /* Белый фон для всей страницы */
             font-family: Arial, sans-serif;
             text-align: center;
-            margin-top: 50px;
-            background-color: #FFFFFF; /* Белый фон для всего сайта */
+            margin: 0; /* Убираем стандартные отступы */
+            padding: 0;
+            height: 100%; /* Устанавливаем высоту для корректного отображения */
         }
         .container {
             max-width: 600px;
-            margin: 0 auto;
+            margin: 50px auto 0 auto; /* Отступ сверху 50px */
+            background-color: #FFFFFF; /* Белый фон для контейнера */
+            padding: 20px;
         }
         .options {
             text-align: left;
             display: inline-block;
             margin: 20px 0;
+            background-color: #FFFFFF; /* Белый фон для вариантов ответа */
         }
         button {
             padding: 10px 20px;
@@ -42,12 +47,15 @@
         #result {
             margin-top: 20px;
             font-weight: bold;
+            background-color: #FFFFFF; /* Белый фон для результата */
         }
         #groupSelection {
             margin: 20px 0;
+            background-color: #FFFFFF; /* Белый фон для выбора группы */
         }
         #testArea {
             display: none;
+            background-color: #FFFFFF; /* Белый фон для области тестов */
         }
         input[type="text"] {
             padding: 5px;
@@ -67,7 +75,7 @@
             background-color: rgba(0, 0, 0, 0.5);
         }
         .modal-content {
-            background-color: white;
+            background-color: #FFFFFF; /* Белый фон для модального окна */
             margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
