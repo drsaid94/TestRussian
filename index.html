@@ -3,13 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Mini App</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Тестовый сайт</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .options {
+            text-align: left;
+            display: inline-block;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: block;
+            margin: 10px auto;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #nextTest {
+            display: none;
+            background-color: #008CBA;
+        }
+        #nextTest:hover {
+            background-color: #007bb5;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #groupSelection {
+            margin: 20px 0;
+        }
+        #testArea {
+            display: none;
+        }
+        input[type="text"] {
+            padding: 5px;
+            margin: 10px 0;
+        }
+        .disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-    <h1>Привет, <span id="username"></span>!</h1>
-    <button id="sendData">Отправить данные</button>
-    <script src="script.js"></script>
+    <div class="container">
+        <h1>Тестовый сайт</h1>
+
+        <!-- Главная страница с выбором группы -->
+        <div id="groupSelection">
+            <p>Выберите группу тестов:</p>
+            <div class="options">
+                <input type="radio" name="group" value="math" id="group1">
+                <label for="group1">Математика</label><br>
+                <input type="radio" name="group" value="logic" id="group2">
+                <label for="group2">Логика</label><br>
+            </div>
+            <button onclick="startTests()">Начать</button>
+        </div>
+
+        <!-- Область тестов -->
+        <div id="testArea">
+            <h2 id="testTitle">Тесты</h2>
+            <p id="question"></p>
+            <div class="options" id="options"></div>
+            <button onclick="checkAnswer()">Проверить</button>
+            <button id="nextTest" onclick="loadNextTest()">Следующий тест</button>
+            <div id="result"></div>
+        </div>
+
+        <!-- Модальное окно с результатами -->
+        <div id="resultModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>Результаты теста</h2>
+                <p id="correctCount" class="correct"></p>
+                <p id="incorrectCount" class="incorrect"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTest = 0;
+        let currentGroupTests = [];
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+
+        const testGroups = {
+            math: [
+                { question: "2x + 3 = 11. Чему равно x?", options: ["4", "5", "6"], correctAnswer: "4" },
+                { question: "12 ÷ 3 + 5 = ?", options: ["7", "9", "4"], correctAnswer: "9" },
+                { question: "3 × 4 - 2 = ?", options: ["10", "12", "14"], correctAnswer: "10" },
+                { question: "15 - 2 × 3 = ?", options: ["9", "12", "6"], correctAnswer: "9" },
+                { question: "Решите: 5x = 20. Чему равно x?", options: "text", correctAnswer: "4" },
+                { question: "7 + 8 = ?", options: ["13", "15", "16"], correctAnswer: "15" },
+                { question: "20 ÷ 4 = ?", options: ["5", "6", "4"], correctAnswer: "5" },
+                { question: "9 × 2 = ?", options: ["16", "18", "20"], correctAnswer: "18" },
+                { question: "14 - 6 = ?", options: ["8", "7", "9"], correctAnswer: "8" },
+                { question: "3 + 5 × 2 = ?", options: ["13", "16", "10"], correctAnswer: "13" },
+                { question: "18 ÷ 3 = ?", options: ["5", "6", "7"], correctAnswer: "6" },
+                { question: "4 × 5 - 3 = ?", options: ["17", "18", "20"], correctAnswer: "17" },
+                { question: "25 - 10 = ?", options: ["14", "15", "16"], correctAnswer: "15" },
+                { question: "6 + 7 = ?", options: ["12", "13", "14"], correctAnswer: "13" },
+                { question: "30 ÷ 5 = ?", options: ["6", "5", "7"], correctAnswer: "6" },
+                { question: "8 × 3 = ?", options: ["22", "24", "26"], correctAnswer: "24" },
+                { question: "16 - 9 = ?", options: ["6", "7", "8"], correctAnswer: "7" },
+                { question: "2 × 6 + 4 = ?", options: ["14", "16", "12"], correctAnswer: "16" },
+                { question: "21 ÷ 7 = ?", options: ["3", "4", "2"], correctAnswer: "3" },
+                { question: "10 + 5 = ?", options: ["15", "16"], correctAnswer: "15" }
+            ],
+            logic: [
+                { question: "Если сегодня вторник, какой день послезавтра?", options: ["Понедельник", "Среда", "Четверг"], correctAnswer: "Четверг" },
+                { question: "Какое число следующее: 2, 4, 6, ...?", options: ["7", "8", "10"], correctAnswer: "8" }
+            ]
+        };
+
+        function startTests() {
+            const selectedGroup = document.querySelector('input[name="group"]:checked');
+            if (!selectedGroup) {
+                alert("Пожалуйста, выберите группу тестов!");
+                return;
+            }
+
+            document.getElementById("groupSelection").style.display = "none";
+            document.getElementById("testArea").style.display = "block";
+
+            currentGroupTests = testGroups[selectedGroup.value];
+            currentTest = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            loadTest();
+        }
+
+        function loadTest() {
+            const questionDiv = document.getElementById("question");
+            const optionsDiv = document.getElementById("options");
+            const resultDiv = document.getElementById("result");
+            const nextButton = document.getElementById("nextTest");
+            const testTitle = document.getElementById("testTitle");
+
+            testTitle.innerHTML = `Тесты: ${currentGroupTests === testGroups.math ? "Математика" : "Логика"} (Задача ${currentTest + 1} из ${currentGroupTests.length})`;
+
+            questionDiv.innerHTML = currentGroupTests[currentTest].question;
+            optionsDiv.innerHTML = "";
+
+            if (currentGroupTests[currentTest].options === "text") {
+                optionsDiv.innerHTML = `<input type="text" id="textAnswer" placeholder="Введите ответ">`;
+            } else {
+                currentGroupTests[currentTest].options.forEach((option, index) => {
+                    optionsDiv.innerHTML += `
+                        <input type="radio" name="answer" value="${option}" id="option${index + 1}">
+                        <label for="option${index + 1}">${option}</label><br>
+                    `;
+                });
+            }
+
+            resultDiv.innerHTML = "";
+            nextButton.style.display = "none";
+            optionsDiv.classList.remove("disabled");
+        }
+
+        function checkAnswer() {
+            const resultDiv = document.getElementById("result");
+            const nextButton = document.getElementById("nextTest");
+            const optionsDiv = document.getElementById("options");
+            const correctAnswer = currentGroupTests[currentTest].correctAnswer;
+
+            let isCorrect = false;
+
+            if (currentGroupTests[currentTest].options === "text") {
+                const textAnswer = document.getElementById("textAnswer").value.trim();
+                if (!textAnswer) {
+                    resultDiv.innerHTML = "Введите ответ!";
+                    resultDiv.style.color = "orange";
+                    return;
+                }
+                isCorrect = textAnswer === correctAnswer;
+            } else {
+                const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+                if (!selectedAnswer) {
+                    resultDiv.innerHTML = "Выберите один из вариантов!";
+                    resultDiv.style.color = "orange";
+                    return;
+                }
+                isCorrect = selectedAnswer.value === correctAnswer;
+            }
+
+            if (isCorrect) {
+                resultDiv.innerHTML = `Правильно! Ответ: ${correctAnswer}`;
+                resultDiv.style.color = "green";
+                correctAnswers++;
+            } else {
+                resultDiv.innerHTML = `Неправильно. Правильный ответ: ${correctAnswer}`;
+                resultDiv.style.color = "red";
+                incorrectAnswers++;
+            }
+
+            optionsDiv.classList.add("disabled");
+
+            if (currentTest < currentGroupTests.length - 1) {
+                nextButton.style.display = "block";
+            } else {
+                showResults();
+            }
+        }
+
+        function loadNextTest() {
+            currentTest++;
+            loadTest();
+        }
+
+        function showResults() {
+            const modal = document.getElementById("resultModal");
+            const correctCount = document.getElementById("correctCount");
+            const incorrectCount = document.getElementById("incorrectCount");
+
+            correctCount.innerHTML = `Правильных ответов: ${correctAnswers}`;
+            incorrectCount.innerHTML = `Неправильных ответов: ${incorrectAnswers}`;
+            modal.style.display = "block";
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("resultModal");
+            modal.style.display = "none";
+            document.getElementById("testArea").style.display = "none";
+            document.getElementById("groupSelection").style.display = "block";
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+        }
+    </script>
 </body>
 </html>
