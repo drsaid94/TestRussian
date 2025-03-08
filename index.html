@@ -9,6 +9,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
             margin-top: 50px;
+            background-color: #FFFFFF; /* Белый фон для всего сайта */
         }
         .container {
             max-width: 600px;
@@ -56,7 +57,6 @@
             pointer-events: none;
             opacity: 0.6;
         }
-        /* Стили для модального окна */
         .modal {
             display: none;
             position: fixed;
@@ -122,7 +122,7 @@
         <!-- Модальное окно с результатами -->
         <div id="resultModal" class="modal">
             <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
+                <span class="close" onclick="closeModal()">×</span>
                 <h2>Результаты теста</h2>
                 <p id="correctCount" class="correct"></p>
                 <p id="incorrectCount" class="incorrect"></p>
